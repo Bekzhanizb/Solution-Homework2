@@ -1,28 +1,18 @@
+import Builder.Dungeon;
+
 import java.util.Scanner;
 
-/**
- * MUDController (Skeleton):
- * A simple controller that reads player input and orchestrates
- * basic commands like look around, move, pick up items,
- * check inventory, show help, etc.
- */
 public class MUDController {
-
-    private Player player;
+    private final Player player;
+    private final Dungeon dungeon;
     private boolean running;
 
-    /**
-     * Constructs the controller with a reference to the current player.
-     */
-    public MUDController(Player player) {
+    public MUDController(Player player, Dungeon dungeon) {
         this.player = player;
+        this.dungeon = dungeon;
         this.running = true;
     }
 
-    /**
-     * Main loop method that repeatedly reads input from the user
-     * and dispatches commands until the game ends.
-     */
     public void runGameLoop() {
         Scanner scanner = new Scanner(System.in);
         while (running) {
@@ -33,9 +23,6 @@ public class MUDController {
         scanner.close();
     }
 
-    /**
-     * Handle a single command input (e.g. 'look', 'move forward', 'pick up sword').
-     */
     public void handleInput(String input) {
         String[] parts = input.split(" ", 2);
         String command = parts[0].toLowerCase();
@@ -43,7 +30,7 @@ public class MUDController {
 
         switch (command) {
             case "look":
-                lookAround();
+                dungeon.describe();
                 break;
             case "move":
                 if (arg != null) {
@@ -74,39 +61,13 @@ public class MUDController {
         }
     }
 
-    /**
-     * Look around the current room: describe it and show items/NPCs.
-     */
-    private void lookAround() {
-        // Assuming the player has a reference to the current room
-        System.out.println("You are in a room. There are doors to the north, south, east, and west.");
-        System.out.println("You see a sword on the ground.");
-    }
-
-    /**
-     * Move the player in a given direction (forward, back, left, right).
-     */
     private void move(String direction) {
-        // Assuming the player has a reference to the current room and can move to adjacent rooms
-        switch (direction.toLowerCase()) {
-            case "north":
-            case "south":
-            case "east":
-            case "west":
-                System.out.println("You move " + direction + ".");
-                lookAround(); // Describe the new room
-                break;
-            default:
-                System.out.println("Invalid direction. Please specify north, south, east, or west.");
-        }
+        System.out.println("You move " + direction + ".");
+        dungeon.describe(); // Описание новой комнаты
     }
 
-    /**
-     * Pick up an item (e.g. "pick up sword").
-     */
     private void pickUp(String item) {
-        // Assuming the current room has a list of items
-        if (item.equals("sword")) {
+        if (dungeon.getItems().contains(item)) {
             player.addItem(item);
             System.out.println("You picked up the " + item + ".");
         } else {
@@ -114,9 +75,6 @@ public class MUDController {
         }
     }
 
-    /**
-     * Check the player's inventory.
-     */
     private void checkInventory() {
         if (player.inventory.isEmpty()) {
             System.out.println("Your inventory is empty.");
@@ -128,9 +86,6 @@ public class MUDController {
         }
     }
 
-    /**
-     * Show help commands
-     */
     private void showHelp() {
         System.out.println("Available commands:");
         System.out.println("  look - Look around the current room");
