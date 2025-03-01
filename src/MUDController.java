@@ -1,4 +1,5 @@
 import Builder.Dungeon;
+import Prototype.Room;
 
 import java.util.Scanner;
 
@@ -62,8 +63,14 @@ public class MUDController {
     }
 
     private void move(String direction) {
-        System.out.println("You move " + direction + ".");
-        dungeon.describe(); // Описание новой комнаты
+        Room nextRoom = dungeon.getRoomInDirection(direction.toLowerCase());
+        if (nextRoom != null) {
+            dungeon.setCurrentRoom(nextRoom);
+            System.out.println("You move " + direction + ".");
+            dungeon.describe();
+        } else {
+            System.out.println("You can't move " + direction + ". There is no room in that direction.");
+        }
     }
 
     private void pickUp(String item) {
